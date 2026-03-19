@@ -1,0 +1,64 @@
+server:
+  socketTimeoutMillis: 30000
+  connectTimeoutMillis: 10000
+  maxWorkerThreads: 32
+  listeners:
+    - port: 8888
+      profileId: device-a
+    - port: 8889
+      profileId: device-b
+
+tls:
+  ca:
+    certPath: .proxy/ca/proxy-ca.cer
+    keyStorePath: .proxy/ca/proxy-ca.p12
+    keyStorePasswordEnv: PROXY_CA_PASSWORD
+    validityDays: 10950
+    distinguishedName: CN=Proxy Test Root CA,O=Proxy,C=CN
+  leaf:
+    validityDays: 1825
+  certCacheDir: .proxy/cert-cache
+
+rewrite:
+  redactHeaders:
+    - authorization
+    - cookie
+    - set-cookie
+    - x-auth-token
+  globalRules:
+    - id: strip-proxy-headers
+      actions:
+        - action: remove
+          name: Proxy-Connection
+  targetRules:
+    - id: app-api-device-headers
+      hosts:
+        - api.example.com
+        - "*.internal.example.com"
+      actions:
+        - action: set
+          name: X-From-Proxy
+          value: true
+
+profiles:
+  - id: device-a
+    headers:
+      User-Agent: Device-A/1.0
+      X-Device-Id: device-a
+      X-App-Version: 1.0.0
+      X-OS-Version: Android 14
+      X-Device-Model: Pixel 8
+      X-Network-Type: wifi
+  - id: device-b
+    headers:
+      User-Agent: Device-B/1.0
+      X-Device-Id: device-b
+      X-App-Version: 1.0.0
+      X-OS-Version: Android 14
+      X-Device-Model: Pixel 8 Pro
+      X-Network-Type: 5g
+
+admin:
+  enabled: true
+  host: 127.0.0.1
+  port: 9090

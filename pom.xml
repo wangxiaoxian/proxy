@@ -5,15 +5,19 @@
 
     <groupId>com.example.proxy</groupId>
     <artifactId>header-proxy</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <name>header-proxy</name>
-    <description>Simple HTTP header proxy (acts as browser network proxy)</description>
+    <description>Config-driven HTTP/HTTPS MITM proxy for controlled testing</description>
 
     <properties>
         <java.version>17</java.version>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <bouncycastle.version>1.78.1</bouncycastle.version>
+        <snakeyaml.version>2.4</snakeyaml.version>
+        <slf4j.version>2.0.9</slf4j.version>
+        <logback.version>1.5.6</logback.version>
+        <junit.version>4.13.2</junit.version>
     </properties>
 
     <dependencies>
@@ -26,6 +30,27 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk18on</artifactId>
             <version>${bouncycastle.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -61,14 +86,17 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.4</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
                     <archive>
                         <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.example.proxy.HttpProxyServer</mainClass>
+                            <mainClass>com.example.proxy.ProxyApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
